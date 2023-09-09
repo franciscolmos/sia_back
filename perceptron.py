@@ -1,12 +1,18 @@
 import numpy as np
-import random
-
 
 class neurona():
-    def __init__(self, pesos_iniciales: np.array, taza_de_aprendizaje: float) -> None:
+    def __init__(self, pesos_iniciales, taza_de_aprendizaje: float) -> None:
         self.pesos = pesos_iniciales
         self.taza_de_aprendizaje = taza_de_aprendizaje
         self.error: float = None
+
+
+    def to_dict(self):
+        return {
+            "pesos": self.pesos,
+            "taza_de_aprendizaje": self.taza_de_aprendizaje,
+            "error": self.error
+        }
 
 
     def entrenar_neurona(self, entradas_de_entrenamiento: np.array, salidas_de_entrenamiento: np.array):
@@ -18,8 +24,15 @@ class neurona():
                 salida_obtenida = self.activacion(producto_punto)
                 self.error = salida - salida_obtenida
                 self.pesos = self.pesos + self.taza_de_aprendizaje * self.error * entrada
-    
+        nuevos_pesos = list()
+        for peso in self.pesos:
+            nuevo_peso = float(peso)
+            nuevos_pesos.append(nuevo_peso)
+        self.pesos = nuevos_pesos
+        self.taza_de_aprendizaje = float(self.taza_de_aprendizaje)
+        self.error = float(self.error)
 
+    
     def agregacion(self, entrada):
         return np.dot(self.pesos, entrada)
     
@@ -43,6 +56,13 @@ class perceptron():
         self.neuronas = [neurona_1, neurona_2]
 
 
+    def to_dict(self):
+        return {
+            "neurona_1": self.neuronas[0].to_dict(),
+            "neurona_2": self.neuronas[1].to_dict(),
+        }
+
+
     def entrenar(self, entradas_de_entrenamiento: np.array, salidas_de_entrenamiento: np.array) -> None:
         salidas_de_entrenamiento = salidas_de_entrenamiento.T
         for neurona, salidas in zip(self.neuronas, salidas_de_entrenamiento):
@@ -53,13 +73,12 @@ class perceptron():
         self.neuronas[neurona].entrenar_neurona(entradas_de_entrenamiento, salida_de_entrenamiento)
 
     
-    def predecir(self, entradas: np.array):
-        for entrada in entradas:
-            imprimir = f"{entrada} - ["
-            for neurona in self.neuronas:
-                imprimir += str(neurona.predecir(entrada)) + " "
-            imprimir += "]"
-            print(imprimir)
+    def predecir(self, entradas):
+        salidas_dict = dict()
+        for neurona, i in zip(self.neuronas, range(1, len(self.neuronas)+1)):
+            prediccion = neurona.predecir(entradas)
+            salidas_dict[f"M{i}"] = prediccion
+        return salidas_dict
     
 
     def predecir_entradas_de_testeo(self, entradas: np.array):
@@ -73,19 +92,15 @@ class perceptron():
                                [ 1,  1],
                                [-1,  1]])
         salidas = list()
-        imprimir = ""
         for entrada in entradas:
-            imprimir += f"{entrada} - ["
             salidas_actuales = list()
             for neurona in self.neuronas:
                 salida = neurona.predecir(entrada)
                 salidas_actuales.append(salida)
-                imprimir += str(salida) + " "
-            imprimir += "]\n"
             salidas.append(salidas_actuales)
         salidas_matriz = np.vstack(salidas)
         if np.array_equal(salidas_matriz, salidas_ok):
-            return imprimir
+            return "Testeo OK"
         else:
             return None
     
@@ -95,8 +110,9 @@ class perceptron():
         for neurona in self.neuronas:
             imprimir += f"{neurona}\n"
         return imprimir
-    
-if __name__ == "__main__":
+
+
+def crear_perceptron():
     entradas_de_entrenamiento = np.array([[ 1,  1,  1,  1], 
                                           [-1,  1,  1,  1], 
                                           [ 1,  1, -1, -1], 
@@ -113,58 +129,10 @@ if __name__ == "__main__":
                                          [-1,  1], 
                                          [ 1, -1]])
     
-    entradas_de_testeo =np.array([[ 1, -1, -1, -1],
-                                  [ 1, -1,  1, -1],
-                                  [-1, -1,  1,  1],
-                                  [-1,  1, -1,  1],
-                                  [-1, -1,  1, -1],
-                                  [-1,  1,  1, -1],
-                                  [ 1, -1, -1,  1],
-                                  [-1, -1, -1,  1],
-                                  [-1,  1, -1, -1]])
-    
     neurona_1 = neurona(np.array([ 0.08174903, -0.8377704, 0.33671084, 0.57375835]),  0.03673239027963381)
     neurona_2 = neurona(np.array([-0.4094063,   0.53426245, -0.44470761,  0.98560924]), 0.05788280232040685)
     perceptron_actual = perceptron(neurona_1, neurona_2)
     
     perceptron_actual.entrenar(entradas_de_entrenamiento, salidas_de_entrenamiento)
-    print(perceptron_actual)
-
-    perceptron_actual.predecir(entradas_de_testeo)
-
-    # for _ in range(1000):
-    #     pesos_random_neurona_1 = np.random.uniform(-1, 1, size=4)
-    #     pesos_random_neurona_2 = np.random.uniform(-1, 1, size=4)
-    #     taza_aprendizaje_1 = random.uniform(0.001, 0.1)
-    #     taza_aprendizaje_2 = random.uniform(0.001, 0.1)
-
-    #     neurona_1 = neurona(pesos_random_neurona_1, taza_aprendizaje_1)
-    #     neurona_2 = neurona(pesos_random_neurona_2, taza_aprendizaje_2)
-    #     perceptron_actual = perceptron(neurona_1, neurona_2)
-
-    #     perceptron_actual.entrenar(entradas_de_entrenamiento, salidas_de_entrenamiento)
-    #     # print(perceptron_actual)
-
-    #     sirve = perceptron_actual.predecir_entradas_de_testeo(entradas_de_testeo)
-
-    #     if sirve is not None:
-    #         print(f"Pesos iniciales neurona 1: {pesos_random_neurona_1}")
-    #         print(f"Pesos iniciales neurona 2: {pesos_random_neurona_2}")
-    #         print(perceptron_actual)
-    #         print(sirve)
-    #         break
-
-
-
-"""
-SALIDAS CORRECTAS
-[ 1 -1 -1 -1] - [ 1 -1 ]
-[ 1 -1  1 -1] - [ 1 -1 ]
-[-1 -1  1  1] - [ 1  1 ]
-[-1  1 -1  1] - [-1  1 ]
-[-1 -1  1 -1] - [ 1 -1 ]
-[-1  1  1 -1] - [-1 -1 ]
-[ 1 -1 -1  1] - [ 1  1 ]
-[-1 -1 -1  1] - [ 1  1 ]
-[-1  1 -1 -1] - [-1  1 ]
-"""
+    
+    return perceptron_actual
