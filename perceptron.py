@@ -1,6 +1,6 @@
 import numpy as np
 
-class neurona():
+class Neurona():
     def __init__(self, pesos_iniciales, taza_de_aprendizaje: float) -> None:
         self.pesos = pesos_iniciales
         self.taza_de_aprendizaje = taza_de_aprendizaje
@@ -51,8 +51,8 @@ class neurona():
         return f"Neurona -> pesos: {self.pesos} || taza de aprendizaje: {self.taza_de_aprendizaje} || error: {self.error}"
 
 
-class perceptron():
-    def __init__(self, neurona_1: neurona, neurona_2: neurona) -> None:
+class Perceptron():
+    def __init__(self, neurona_1: Neurona, neurona_2: Neurona) -> None:
         self.neuronas = [neurona_1, neurona_2]
 
 
@@ -67,19 +67,15 @@ class perceptron():
         salidas_de_entrenamiento = salidas_de_entrenamiento.T
         for neurona, salidas in zip(self.neuronas, salidas_de_entrenamiento):
             neurona.entrenar_neurona(entradas_de_entrenamiento, salidas)
-    
 
-    def entrenar_neurona(self, neurona: int, entradas_de_entrenamiento: np.array, salida_de_entrenamiento: np.array) -> None:
-        self.neuronas[neurona].entrenar_neurona(entradas_de_entrenamiento, salida_de_entrenamiento)
 
-    
     def predecir(self, entradas):
         salidas_dict = dict()
         for neurona, i in zip(self.neuronas, range(1, len(self.neuronas)+1)):
             prediccion = neurona.predecir(entradas)
             salidas_dict[f"M{i}"] = prediccion
         return salidas_dict
-    
+
 
     def predecir_entradas_de_testeo(self, entradas: np.array):
         salidas_ok = np.array([[ 1, -1],
@@ -129,9 +125,9 @@ def crear_perceptron():
                                          [-1,  1], 
                                          [ 1, -1]])
     
-    neurona_1 = neurona(np.array([ 0.08174903, -0.8377704, 0.33671084, 0.57375835]),  0.03673239027963381)
-    neurona_2 = neurona(np.array([-0.4094063,   0.53426245, -0.44470761,  0.98560924]), 0.05788280232040685)
-    perceptron_actual = perceptron(neurona_1, neurona_2)
+    neurona_1 = Neurona(np.array([ 0.08174903, -0.8377704, 0.33671084, 0.57375835]),  0.03673239027963381)
+    neurona_2 = Neurona(np.array([-0.4094063,   0.53426245, -0.44470761,  0.98560924]), 0.05788280232040685)
+    perceptron_actual = Perceptron(neurona_1, neurona_2)
     
     perceptron_actual.entrenar(entradas_de_entrenamiento, salidas_de_entrenamiento)
     

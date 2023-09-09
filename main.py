@@ -2,7 +2,8 @@ from fastapi import FastAPI
 import numpy as np
 import requests
 import json
-from perceptron import crear_perceptron
+from perceptron import crear_perceptron as perceptron_vectorizado
+from perceptron_no_vectorizado import crear_perceptron as perceptron_no_vectorizado
 
 app = FastAPI()
 perceptron_entrenado = list()
@@ -11,9 +12,16 @@ perceptron_entrenado = list()
 def index():
     return {'message': 'hello world' }
 
-@app.get('/entrenar_perceptron')
+@app.get('/entrenar_perceptron_vectorizado')
 def entrenar_y_obtener_perceptron():
-    perceptron_entrenado.append(crear_perceptron())
+    perceptron_entrenado.clear()
+    perceptron_entrenado.append(perceptron_vectorizado())
+    return perceptron_entrenado[0].to_dict()
+
+@app.get('/entrenar_perceptron_no_vectorizado')
+def entrenar_y_obtener_perceptron():
+    perceptron_entrenado.clear()
+    perceptron_entrenado.append(perceptron_no_vectorizado())
     return perceptron_entrenado[0].to_dict()
 
 @app.get('/testear')
