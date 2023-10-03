@@ -2,7 +2,7 @@ from fastapi import FastAPI
 import numpy as np
 import requests
 import json
-from perceptron import crear_perceptron as perceptron_vectorizado
+from perceptron_vectorizado import crear_perceptron as perceptron_vectorizado
 from perceptron_no_vectorizado import crear_perceptron as perceptron_no_vectorizado
 
 app = FastAPI()
