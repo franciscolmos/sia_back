@@ -29,7 +29,7 @@ class neurona():
 
     def to_dict(self):
         return {
-            "pesos": self.pesos,
+            "pesos": list(self.pesos),
             "taza_de_aprendizaje": self.taza_de_aprendizaje,
             "error": self.error
         }

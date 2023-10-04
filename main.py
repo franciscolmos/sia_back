@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 import requests
 import json
@@ -9,6 +10,15 @@ from red_backpropagation_vectorizado import crear_backpropagation as back_propag
 
 app = FastAPI()
 red_neuronal = list()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"], 
+)
+
 
 @app.get('/')
 def index():
@@ -62,4 +72,4 @@ def predecir():
         else:
             return {'message': f"Error en la solicitud. Código de estado: {respuesta_post.status_code}"} 
     else:
-        return {'message': f"Error en la solicitud. Código de estado: {respuesta.status_code}"} 
+        return {'message': f"Error en la solicitud. Código de estado: {respuesta.status_code}"}
