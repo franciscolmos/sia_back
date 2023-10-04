@@ -4,9 +4,11 @@ import requests
 import json
 from perceptron_vectorizado import crear_perceptron as perceptron_vectorizado
 from perceptron_no_vectorizado import crear_perceptron as perceptron_no_vectorizado
+from red_backpropagation_no_vectorizado import crear_backpropagation as back_propagation_no_vectorizado
+from red_backpropagation_vectorizado import crear_backpropagation as back_propagation_vectorizado
 
 app = FastAPI()
-perceptron_entrenado = list()
+red_neuronal = list()
 
 @app.get('/')
 def index():
@@ -14,15 +16,27 @@ def index():
 
 @app.get('/entrenar_perceptron_vectorizado')
 def entrenar_y_obtener_perceptron():
-    perceptron_entrenado.clear()
-    perceptron_entrenado.append(perceptron_vectorizado())
-    return perceptron_entrenado[0].to_dict()
+    red_neuronal.clear()
+    red_neuronal.append(perceptron_vectorizado())
+    return red_neuronal[0].to_dict()
 
 @app.get('/entrenar_perceptron_no_vectorizado')
 def entrenar_y_obtener_perceptron():
-    perceptron_entrenado.clear()
-    perceptron_entrenado.append(perceptron_no_vectorizado())
-    return perceptron_entrenado[0].to_dict()
+    red_neuronal.clear()
+    red_neuronal.append(perceptron_no_vectorizado())
+    return red_neuronal[0].to_dict()
+
+@app.get('/entrenar_backpropagation_vectorizado')
+def entrenar_y_obtener_backpropagation():
+    red_neuronal.clear()
+    red_neuronal.append(back_propagation_vectorizado())
+    return red_neuronal[0].to_dict()
+
+@app.get('/entrenar_backpropagation_no_vectorizado')
+def entrenar_y_obtener_backpropagation_no_vectorizado():
+    red_neuronal.clear()
+    red_neuronal.append(back_propagation_no_vectorizado())
+    return red_neuronal[0].to_dict()
 
 @app.get('/testear')
 def testear():
@@ -35,12 +49,12 @@ def testear():
                                 [ 1, -1, -1,  1],
                                 [-1, -1, -1,  1],
                                 [-1,  1, -1, -1]])
-    mensaje = perceptron_entrenado[0].predecir_entradas_de_testeo(entradas_de_testeo)
+    mensaje = red_neuronal[0].predecir_entradas_de_testeo(entradas_de_testeo)
     return {'message': mensaje}
     
 @app.get('/listar_perceptron')
 def listar_perceptron():
-    return perceptron_entrenado[0].to_dict()
+    return red_neuronal[0].to_dict()
 
 @app.get('/predecir')
 def predecir():
@@ -49,7 +63,7 @@ def predecir():
     if respuesta.status_code == 200:
         entrada = json.loads(respuesta.text)
         entrada_array = [int(item["Resp"][f"S{i}"]) for i in range(1,5) for item in entrada]
-        prediccion =  perceptron_entrenado[0].predecir(entrada_array)
+        prediccion =  red_neuronal[0].predecir(entrada_array)
 
         payload = entrada[0]["Resp"]
         payload.update(prediccion)
