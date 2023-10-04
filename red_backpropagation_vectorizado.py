@@ -138,24 +138,22 @@ class backpropagation():
 
     def predecir(self, entrada_de_testeo: np.array) -> list:
         activaciones_capa_oculta = list()
-        activaciones_capa_salida = list()
+        salidas_dict = dict()
 
         # Paso hacia adelante capa oculta
         for i, neurona_oculta in enumerate(self.capa_oculta):
             if i == 0:
                 activaciones_capa_oculta[i] = neurona_oculta.valor_activacion
             else:
-                agregacion = neurona_oculta.agregacion(entrada_de_testeo)
-                activacion = neurona_oculta.activacion(agregacion)
-                activaciones_capa_oculta[i] = activacion
+                prediccion = neurona_oculta.predecir()
+                activaciones_capa_oculta[i] = prediccion
         
         # Paso hacia adelante capa salida
-        for neurona_salida in self.capa_salida:
-            agregacion = neurona_salida.agregacion(activaciones_capa_oculta)
-            activacion = neurona_salida.activacion(agregacion)
-            activaciones_capa_salida.append(activacion)
+        for i, neurona_salida in enumerate(self.capa_salida):
+            prediccion = neurona_salida.predecir()
+            salidas_dict[f"M{i+1}"] = prediccion
             
-        return activaciones_capa_salida
+        return salidas_dict
 
 
     def __str__(self) -> str:
