@@ -37,23 +37,9 @@ def entrenar_y_obtener_backpropagation_no_vectorizado():
     red_neuronal.clear()
     red_neuronal.append(back_propagation_no_vectorizado())
     return red_neuronal[0].to_dict()
-
-@app.get('/testear')
-def testear():
-    entradas_de_testeo =np.array([[ 1, -1, -1, -1],
-                                [ 1, -1,  1, -1],
-                                [-1, -1,  1,  1],
-                                [-1,  1, -1,  1],
-                                [-1, -1,  1, -1],
-                                [-1,  1,  1, -1],
-                                [ 1, -1, -1,  1],
-                                [-1, -1, -1,  1],
-                                [-1,  1, -1, -1]])
-    mensaje = red_neuronal[0].predecir_entradas_de_testeo(entradas_de_testeo)
-    return {'message': mensaje}
     
-@app.get('/listar_perceptron')
-def listar_perceptron():
+@app.get('/listar_red_neuronal')
+def listar_red_neuronal():
     return red_neuronal[0].to_dict()
 
 @app.get('/predecir')
